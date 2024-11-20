@@ -125,6 +125,13 @@ def process_data(df):
     price_columns = ['usd', 'usd_foil', 'usd_etched', 'eur', 'eur_foil', 'tix']
     for col in price_columns:
         df[col] = pd.to_numeric(df[col], errors='coerce')
+
+    df['image_small'] = df['image_uris'].apply(lambda x: x.get('small') if isinstance(x, dict) else None)
+    df['image_normal'] = df['image_uris'].apply(lambda x: x.get('normal') if isinstance(x, dict) else None)
+    df['image_large'] = df['image_uris'].apply(lambda x: x.get('large') if isinstance(x, dict) else None)
+    df['image_png'] = df['image_uris'].apply(lambda x: x.get('png') if isinstance(x, dict) else None)
+    df['image_artcrop'] = df['image_uris'].apply(lambda x: x.get('art_crop') if isinstance(x, dict) else None)
+    df['image_bordercrop'] = df['image_uris'].apply(lambda x: x.get('border_crop') if isinstance(x, dict) else None)
     
     return df
 
