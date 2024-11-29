@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 import psycopg2
+from .db import get_session
 
 def get_scryfall_bulk_data():
     # Get the bulk data information
@@ -135,13 +136,11 @@ def process_data(df):
     
     return df
 
-load_dotenv()
-pg_user = os.getenv('POSTGRES_USER')
-pg_pass = os.getenv('POSTGRES_PASS')
-engine = create_engine(f'postgresql+psycopg2://{pg_user}:{pg_pass}@localhost/postgres')
+session = get_session
 
 def put_data_in_db(df):
-    df.to_sql('all_cards', engine, index=False, if_exists='replace')
+    df.to_sql('all_cards', session, index=False, if_exists='replace')
+    session.commit()
     print("Data added to database")
 
 
@@ -150,3 +149,5 @@ if __name__ == "__main__":
     df = put_data_in_df(bulk_data)
     df = process_data(df)
     put_data_in_db(df)
+
+    session.close()
